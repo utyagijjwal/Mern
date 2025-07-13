@@ -1,5 +1,9 @@
-const { useState } = React;
-const { useNavigate, useLocation, Link } = ReactRouterDOM;
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
+import { React, useState } from "react";
+
+const BackendURL = import.meta.env.BACKEND_URL;
+
 
 const VerifyOTP = () => {
   const navigate = useNavigate();
@@ -126,3 +130,5 @@ const VerifyOTP = () => {
     </div>
   );
 };
+
+export default VerifyOTP;

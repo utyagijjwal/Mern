@@ -340,8 +340,7 @@
 
 // export default StudyNavbar;
 
-const { Link } = ReactRouterDOM;
-
+import { Link } from "react-router-dom";
 const NavBar = ({ token, logout }) => {
   return (
     <nav className="bg-blue-700 text-white shadow-lg">
@@ -352,7 +351,10 @@ const NavBar = ({ token, logout }) => {
         <div className="space-x-6 flex items-center">
           {!token ? (
             <>
-              <Link to="/" className="text-lg hover:text-blue-200 transition">
+              <Link
+                to="/register"
+                className="text-lg hover:text-blue-200 transition"
+              >
                 Register
               </Link>
               <Link
@@ -383,3 +385,5 @@ const NavBar = ({ token, logout }) => {
     </nav>
   );
 };
+
+export default NavBar;

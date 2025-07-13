@@ -298,8 +298,10 @@
 
 // export default Register;
 
-const { useState } = React;
-const { useNavigate, Link } = ReactRouterDOM;
+import { React, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+const BackendURL = import.meta.env.BACKEND_URL;
 
 const Register = () => {
   const navigate = useNavigate();
@@ -321,7 +323,7 @@ const Register = () => {
     setLoading(true);
     setMessage("");
     try {
-      const res = await fetch("http://localhost:8000/api/auth/register", {
+      const res = await fetch(`${BackendURL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -451,3 +453,5 @@ const Register = () => {
     </div>
   );
 };
+
+export default Register;
