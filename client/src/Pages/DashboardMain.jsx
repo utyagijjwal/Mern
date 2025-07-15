@@ -10,6 +10,8 @@ import {
   FiUser,
 } from "react-icons/fi";
 
+const REACT_APP_BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const DashboardMain = ({ token, setUser, logout }) => {
   const [profile, setProfile] = useState(null);
   const [message, setMessage] = useState("");
@@ -18,7 +20,7 @@ const DashboardMain = ({ token, setUser, logout }) => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/auth/profile", {
+        const res = await fetch(`${REACT_APP_BACKEND_URL}/api/auth/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();

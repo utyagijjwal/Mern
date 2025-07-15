@@ -12,6 +12,8 @@ import { PulseLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const REACT_APP_BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const Login = ({ setToken }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -28,7 +30,7 @@ const Login = ({ setToken }) => {
     setLoading(true);
     setMessage("");
     try {
-      const res = await fetch(`http://localhost:8000/api/auth/login`, {
+      const res = await fetch(`${REACT_APP_BACKEND_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

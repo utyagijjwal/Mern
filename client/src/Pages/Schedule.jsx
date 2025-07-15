@@ -9,6 +9,8 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
+const REACT_APP_BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const Schedule = ({ token }) => {
   const navigate = useNavigate();
   const [schedule, setSchedule] = useState([]);
@@ -54,7 +56,7 @@ const Schedule = ({ token }) => {
     const fetchSchedule = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:8000/api/auth/profile", {
+        const res = await fetch(`${REACT_APP_BACKEND_URL}/api/auth/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -122,8 +124,8 @@ const Schedule = ({ token }) => {
     setFormLoading(true);
     try {
       const url = editEventId
-        ? `http://localhost:8000/api/auth/schedule/${editEventId}`
-        : "http://localhost:8000/api/auth/schedule";
+        ? `${REACT_APP_BACKEND_URL}/api/auth/schedule/${editEventId}`
+        : `${REACT_APP_BACKEND_URL}/api/auth/schedule`;
       const method = editEventId ? "PUT" : "POST";
       const res = await fetch(url, {
         method,
@@ -205,7 +207,7 @@ const Schedule = ({ token }) => {
     setFormLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:8000/api/auth/schedule/${eventId}`,
+        `${REACT_APP_BACKEND_URL}/api/auth/schedule/${eventId}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },

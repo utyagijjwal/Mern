@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { React, useState } from "react";
 
+const REACT_APP_BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const VerifyOTP = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -21,7 +22,7 @@ const VerifyOTP = () => {
     setLoading(true);
     setMessage("");
     try {
-      const res = await fetch("http://localhost:8000/api/auth/verify-otp", {
+      const res = await fetch(`${REACT_APP_BACKEND_URL}/api/auth/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

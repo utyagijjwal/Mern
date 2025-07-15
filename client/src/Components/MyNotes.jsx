@@ -11,6 +11,8 @@ import {
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
+const REACT_APP_BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const MyNotes = ({ token }) => {
   const navigate = useNavigate();
   const [notes, setNotes] = useState([]);
@@ -27,7 +29,7 @@ const MyNotes = ({ token }) => {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/auth/profile", {
+        const res = await fetch(`${REACT_APP_BACKEND_URL}/api/auth/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -55,8 +57,8 @@ const MyNotes = ({ token }) => {
     setMessage("");
     try {
       const url = editNoteId
-        ? `http://localhost:8000/api/auth/notes/${editNoteId}`
-        : "http://localhost:8000/api/auth/notes";
+        ? `${REACT_APP_BACKEND_URL}/api/auth/notes/${editNoteId}`
+        : `${REACT_APP_BACKEND_URL}/api/auth/notes`;
       const method = editNoteId ? "PUT" : "POST";
       const res = await fetch(url, {
         method,
@@ -97,7 +99,7 @@ const MyNotes = ({ token }) => {
     setMessage("");
     try {
       const res = await fetch(
-        `http://localhost:8000/api/auth/notes/${noteId}`,
+        `${REACT_APP_BACKEND_URL}/api/auth/notes/${noteId}`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },

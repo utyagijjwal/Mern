@@ -12,6 +12,8 @@ import { BeatLoader } from "react-spinners";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const REACT_APP_BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -51,7 +53,7 @@ const Register = () => {
     setLoading(true);
     setMessage("");
     try {
-      const res = await fetch(`http://localhost:8000/api/auth/register`, {
+      const res = await fetch(`${REACT_APP_BACKEND_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
