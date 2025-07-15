@@ -1,10 +1,18 @@
-import { useEffect, useState } from "react";
-import { FaGoogleDrive } from "react-icons/fa";
+import { useState } from "react";
+import {
+  FaGoogleDrive,
+  handleChange,
+  handleDelete,
+  handleDownload,
+  handleEdit,
+  handleSubmit,
+} from "react-icons/fa";
 import {
   FiArrowLeft,
   FiCheck,
   FiDownload,
   FiEdit2,
+  FiExternalLink,
   FiPlus,
   FiTrash2,
   FiX,
@@ -24,118 +32,24 @@ const MyNotes = ({ token }) => {
   const [loading, setLoading] = useState(true);
   const [formLoading, setFormLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchNotes = async () => {
-      try {
-        const res = await fetch("http://localhost:8000/api/auth/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        if (res.status === 200) {
-          setNotes(data.notes || []);
-        } else {
-          setMessage(data.message);
-        }
-      } catch (error) {
-        setMessage("Failed to fetch notes. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchNotes();
-  }, [token]);
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setFormLoading(true);
-    setMessage("");
-    try {
-      const url = editNoteId
-        ? `http://localhost:8000/api/auth/notes/${editNoteId}`
-        : "http://localhost:8000/api/auth/notes";
-      const method = editNoteId ? "PUT" : "POST";
-      const res = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      if (res.status === 201 || res.status === 200) {
-        setNotes(data.notes);
-        setFormData({ name: "", subject: "", driveLink: "" });
-        setEditNoteId(null);
-        setMessage(data.message);
-      } else {
-        setMessage(data.message);
-      }
-    } catch (error) {
-      setMessage(editNoteId ? "Failed to update note." : "Failed to add note.");
-    } finally {
-      setFormLoading(false);
-    }
-  };
-
-  const handleEdit = (note) => {
-    setFormData({
-      name: note.name,
-      subject: note.subject,
-      driveLink: note.driveLink,
-    });
-    setEditNoteId(note._id);
-  };
-
-  const handleDelete = async (noteId) => {
-    if (!window.confirm("Are you sure you want to delete this note?")) return;
-    setFormLoading(true);
-    setMessage("");
-    try {
-      const res = await fetch(
-        `http://localhost:8000/api/auth/notes/${noteId}`,
-        {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const data = await res.json();
-      if (res.status === 200) {
-        setNotes(data.notes);
-        setMessage(data.message);
-      } else {
-        setMessage(data.message);
-      }
-    } catch (error) {
-      setMessage("Failed to delete note.");
-    } finally {
-      setFormLoading(false);
-    }
-  };
-
-  const handleDownload = (driveLink) => {
-    window.open(driveLink, "_blank");
-  };
+  // ... (keep all your existing state and functions until the return statement)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl">
             My Notes Manager
           </h1>
-          <p className="mt-3 text-xl text-gray-600">
-            Organize and manage all your study notes in one place
+          <p className="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">
+            Organize and access all your study materials in one centralized
+            place
           </p>
         </div>
 
         {message && (
           <div
-            className={`mb-6 p-4 rounded-lg ${
+            className={`mb-8 p-4 rounded-lg ${
               message.includes("failed")
                 ? "bg-red-100 text-red-800 border border-red-200"
                 : "bg-green-100 text-green-800 border border-green-200"
@@ -152,10 +66,10 @@ const MyNotes = ({ token }) => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Form Section */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-md overflow-hidden p-6 h-full">
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden p-6 h-full border border-gray-100">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">
                   {editNoteId ? "Edit Note" : "Add New Note"}
@@ -166,7 +80,7 @@ const MyNotes = ({ token }) => {
                       setFormData({ name: "", subject: "", driveLink: "" });
                       setEditNoteId(null);
                     }}
-                    className="text-gray-500 hover:text-gray-700 transition"
+                    className="text-gray-500 hover:text-gray-700 transition p-1 rounded-full hover:bg-gray-100"
                     title="Cancel edit"
                   >
                     <FiArrowLeft size={20} />
@@ -174,9 +88,9 @@ const MyNotes = ({ token }) => {
                 )}
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Note Name
                   </label>
                   <input
@@ -185,13 +99,13 @@ const MyNotes = ({ token }) => {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="e.g. Calculus Lecture 1"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Subject
                   </label>
                   <input
@@ -200,13 +114,13 @@ const MyNotes = ({ token }) => {
                     value={formData.subject}
                     onChange={handleChange}
                     placeholder="e.g. Mathematics"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Google Drive Link
                   </label>
                   <div className="relative">
@@ -219,7 +133,7 @@ const MyNotes = ({ token }) => {
                       value={formData.driveLink}
                       onChange={handleChange}
                       placeholder="https://drive.google.com/..."
-                      className="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                      className="w-full pl-10 px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm"
                       required
                     />
                   </div>
@@ -228,7 +142,7 @@ const MyNotes = ({ token }) => {
                 <button
                   type="submit"
                   disabled={formLoading}
-                  className={`w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition ${
+                  className={`w-full flex items-center justify-center py-3 px-4 rounded-lg shadow-sm text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition ${
                     formLoading
                       ? "bg-blue-400 cursor-not-allowed"
                       : "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500"
@@ -275,72 +189,83 @@ const MyNotes = ({ token }) => {
           </div>
 
           {/* Notes List Section */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-md overflow-hidden h-full">
+          <div className="lg:col-span-3">
+            <div className="bg-white rounded-xl shadow-lg overflow-hidden h-full border border-gray-100">
               <div className="p-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                  Your Notes
-                </h2>
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    Your Notes
+                  </h2>
+                  <div className="text-sm text-gray-500">
+                    {notes.length} {notes.length === 1 ? "note" : "notes"}
+                  </div>
+                </div>
 
                 {loading ? (
                   <div className="flex justify-center items-center py-12">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                   </div>
                 ) : notes.length > 0 ? (
-                  <div className="overflow-hidden">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {notes.map((note) => (
-                        <div
-                          key={note._id}
-                          className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition"
-                        >
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-bold text-lg text-gray-800">
-                                {note.name}
-                              </h3>
-                              <p className="text-sm text-gray-600 mt-1">
-                                {note.subject}
-                              </p>
-                            </div>
-                            <div className="flex space-x-2">
-                              <button
-                                onClick={() => handleDownload(note.driveLink)}
-                                className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-full transition"
-                                title="Download"
-                              >
-                                <FiDownload size={18} />
-                              </button>
-                              <button
-                                onClick={() => handleEdit(note)}
-                                className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-full transition"
-                                title="Edit"
-                              >
-                                <FiEdit2 size={18} />
-                              </button>
-                              <button
-                                onClick={() => handleDelete(note._id)}
-                                className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-full transition"
-                                title="Delete"
-                              >
-                                <FiTrash2 size={18} />
-                              </button>
-                            </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
+                    {notes.map((note) => (
+                      <div
+                        key={note._id}
+                        className="border border-gray-100 rounded-xl p-5 hover:shadow-md transition-all duration-200 bg-gradient-to-br from-white to-gray-50"
+                      >
+                        <div className="flex justify-between items-start mb-3">
+                          <div>
+                            <h3 className="font-bold text-lg text-gray-800 mb-1">
+                              {note.name}
+                            </h3>
+                            <span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                              {note.subject}
+                            </span>
                           </div>
-                          <div className="mt-3">
-                            <a
-                              href={note.driveLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
+                          <div className="flex space-x-1">
+                            <button
+                              onClick={() => handleDownload(note.driveLink)}
+                              className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition"
+                              title="Download"
                             >
-                              <FaGoogleDrive className="mr-1" />
-                              View on Google Drive
-                            </a>
+                              <FiDownload size={18} />
+                            </button>
+                            <button
+                              onClick={() => handleEdit(note)}
+                              className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition"
+                              title="Edit"
+                            >
+                              <FiEdit2 size={18} />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(note._id)}
+                              className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition"
+                              title="Delete"
+                            >
+                              <FiTrash2 size={18} />
+                            </button>
                           </div>
                         </div>
-                      ))}
-                    </div>
+
+                        <div className="mt-4 flex items-center justify-between">
+                          <a
+                            href={note.driveLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium"
+                          >
+                            <FaGoogleDrive className="mr-2" />
+                            Open in Drive
+                            <FiExternalLink className="ml-1" size={14} />
+                          </a>
+                          <span className="text-xs text-gray-400">
+                            Added{" "}
+                            {new Date(
+                              note.createdAt || Date.now()
+                            ).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <div className="text-center py-12">
@@ -350,8 +275,9 @@ const MyNotes = ({ token }) => {
                     <h3 className="text-lg font-medium text-gray-900">
                       No notes yet
                     </h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                      Get started by adding your first note.
+                    <p className="mt-2 text-sm text-gray-500 max-w-md mx-auto">
+                      Start by adding your first note to organize your study
+                      materials
                     </p>
                   </div>
                 )}
