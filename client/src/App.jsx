@@ -31,7 +31,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/cources" element={<Courses />} />
-        <Route path="/schedule" element={<Schedule />} />
+        <Route path="/schedule" element={<Schedule token={token} />} />
         <Route path="/progress" element={<Progress />} />
         <Route path="/login" element={<Login setToken={setToken} />} />
         <Route path="/register" element={<Register />} />

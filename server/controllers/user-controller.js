@@ -7,6 +7,7 @@ const {
   loginSchema,
   otpSchema,
   noteSchema,
+  scheduleSchema,
 } = require("../validations/user-validation");
 
 const transporter = nodemailer.createTransport({
@@ -128,6 +129,7 @@ const getProfile = async (req, res) => {
       university: req.user.university,
       email: req.user.email,
       notes: req.user.notes,
+      schedule: req.user.schedule,
     });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
@@ -217,6 +219,97 @@ const deleteNote = async (req, res) => {
   }
 };
 
+const addEvent = async (req, res) => {
+  try {
+    const { error } = scheduleSchema.safeParse(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.errors[0].message });
+    }
+
+    const { title, course, date, time, description } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.schedule.push({
+      title,
+      course,
+      date: new Date(date),
+      time,
+      description,
+    });
+    await user.save();
+
+    res
+      .status(201)
+      .json({ message: "Event added successfully", schedule: user.schedule });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const editEvent = async (req, res) => {
+  try {
+    const { error } = scheduleSchema.safeParse(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.errors[0].message });
+    }
+
+    const { eventId } = req.params;
+    const { title, course, date, time, description } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const event = user.schedule.id(eventId);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    event.title = title;
+    event.course = course;
+    event.date = new Date(date);
+    event.time = time;
+    event.description = description;
+    await user.save();
+
+    res
+      .status(200)
+      .json({ message: "Event updated successfully", schedule: user.schedule });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const deleteEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const event = user.schedule.id(eventId);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    user.schedule.pull(eventId);
+    await user.save();
+
+    res
+      .status(200)
+      .json({ message: "Event deleted successfully", schedule: user.schedule });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   register,
   verifyOTP,
@@ -225,4 +318,7 @@ module.exports = {
   addNote,
   editNote,
   deleteNote,
+  addEvent,
+  editEvent,
+  deleteEvent,
 };

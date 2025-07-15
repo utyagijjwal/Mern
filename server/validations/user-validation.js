@@ -29,4 +29,20 @@ const noteSchema = z.object({
     ),
 });
 
-module.exports = { registerSchema, loginSchema, otpSchema, noteSchema };
+const scheduleSchema = z.object({
+  title: z.string().min(1, "Event title is required").trim(),
+  course: z.string().min(1, "Course is required").trim(),
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)"),
+  time: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time format (HH:MM)"),
+  description: z.string().optional(),
+});
+
+module.exports = {
+  registerSchema,
+  loginSchema,
+  otpSchema,
+  noteSchema,
+  scheduleSchema,
+};

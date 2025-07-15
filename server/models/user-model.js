@@ -64,6 +64,38 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
+    schedule: [
+      {
+        title: {
+          type: String,
+          required: [true, "Event title is required"],
+          trim: true,
+        },
+        course: {
+          type: String,
+          required: [true, "Course is required"],
+          trim: true,
+        },
+        date: {
+          type: Date,
+          required: [true, "Date is required"],
+        },
+        time: {
+          type: String,
+          required: [true, "Time is required"],
+          trim: true,
+        },
+        description: {
+          type: String,
+          trim: true,
+          default: "",
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
