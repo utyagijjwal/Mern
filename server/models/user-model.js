@@ -37,6 +37,33 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    notes: [
+      {
+        name: {
+          type: String,
+          required: [true, "Note name is required"],
+          trim: true,
+        },
+        subject: {
+          type: String,
+          required: [true, "Subject is required"],
+          trim: true,
+        },
+        driveLink: {
+          type: String,
+          required: [true, "Drive link is required"],
+          trim: true,
+          match: [
+            /^https:\/\/drive\.google\.com\/.*/,
+            "Please enter a valid Google Drive link",
+          ],
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

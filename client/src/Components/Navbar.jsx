@@ -340,7 +340,9 @@
 
 // export default StudyNavbar;
 
+
 import { Link } from "react-router-dom";
+
 const NavBar = ({ token, logout }) => {
   return (
     <nav className="bg-blue-700 text-white shadow-lg">
@@ -371,6 +373,12 @@ const NavBar = ({ token, logout }) => {
                 className="text-lg hover:text-blue-200 transition"
               >
                 Dashboard
+              </Link>
+              <Link
+                to="/my-notes"
+                className="text-lg hover:text-blue-200 transition"
+              >
+                My Notes
               </Link>
               <button
                 onClick={logout}

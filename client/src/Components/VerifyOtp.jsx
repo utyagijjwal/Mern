@@ -2,9 +2,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { React, useState } from "react";
 
-const BackendURL = import.meta.env.BACKEND_URL;
-
-
 const VerifyOTP = () => {
   const navigate = useNavigate();
   const { state } = useLocation();

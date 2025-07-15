@@ -6,6 +6,7 @@ const {
   registerSchema,
   loginSchema,
   otpSchema,
+  noteSchema,
 } = require("../validations/user-validation");
 
 const transporter = nodemailer.createTransport({
@@ -126,10 +127,102 @@ const getProfile = async (req, res) => {
       fullName: req.user.fullName,
       university: req.user.university,
       email: req.user.email,
+      notes: req.user.notes,
     });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 };
 
-module.exports = { register, verifyOTP, login, getProfile };
+const addNote = async (req, res) => {
+  try {
+    const { error } = noteSchema.safeParse(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.errors[0].message });
+    }
+
+    const { name, subject, driveLink } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.notes.push({ name, subject, driveLink });
+    await user.save();
+
+    res
+      .status(201)
+      .json({ message: "Note added successfully", notes: user.notes });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const editNote = async (req, res) => {
+  try {
+    const { error } = noteSchema.safeParse(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.errors[0].message });
+    }
+
+    const { noteId } = req.params;
+    const { name, subject, driveLink } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const note = user.notes.id(noteId);
+    if (!note) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+
+    note.name = name;
+    note.subject = subject;
+    note.driveLink = driveLink;
+    await user.save();
+
+    res
+      .status(200)
+      .json({ message: "Note updated successfully", notes: user.notes });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const deleteNote = async (req, res) => {
+  try {
+    const { noteId } = req.params;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const note = user.notes.id(noteId);
+    if (!note) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+
+    user.notes.pull(noteId);
+    await user.save();
+
+    res
+      .status(200)
+      .json({ message: "Note deleted successfully", notes: user.notes });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+module.exports = {
+  register,
+  verifyOTP,
+  login,
+  getProfile,
+  addNote,
+  editNote,
+  deleteNote,
+};

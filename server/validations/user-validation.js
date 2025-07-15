@@ -17,4 +17,16 @@ const otpSchema = z.object({
   otp: z.string().length(6, "OTP must be 6 digits"),
 });
 
-module.exports = { registerSchema, loginSchema, otpSchema };
+const noteSchema = z.object({
+  name: z.string().min(1, "Note name is required").trim(),
+  subject: z.string().min(1, "Subject is required").trim(),
+  driveLink: z
+    .string()
+    .url("Invalid URL")
+    .regex(
+      /^https:\/\/drive\.google\.com\/.*/,
+      "Please enter a valid Google Drive link"
+    ),
+});
+
+module.exports = { registerSchema, loginSchema, otpSchema, noteSchema };

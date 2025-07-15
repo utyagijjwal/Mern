@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Footer from "./Components/Footer";
+import MyNotes from "./Components/MyNotes";
 import Navbar from "./Components/Navbar";
 import VerifyOtp from "./Components/VerifyOtp";
 import Courses from "./Pages/Cources";
@@ -41,6 +42,7 @@ function App() {
             <DashboardMain token={token} setUser={setUser} logout={logout} />
           }
         />
+        <Route path="/my-notes" element={<MyNotes token={token} />} />
       </Routes>
       <Footer />
     </BrowserRouter>

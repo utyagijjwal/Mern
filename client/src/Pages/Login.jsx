@@ -328,8 +328,6 @@
 import { React, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const BackendURL = import.meta.env.BACKEND_URL;
-
 const Login = ({ setToken }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -345,7 +343,7 @@ const Login = ({ setToken }) => {
     setLoading(true);
     setMessage("");
     try {
-      const res = await fetch(`${BackendURL}/api/auth/verify-otp`, {
+      const res = await fetch(`http://localhost:8000/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
