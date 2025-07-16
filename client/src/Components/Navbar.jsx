@@ -72,7 +72,7 @@ const NavBar = ({ token, logout }) => {
                 } flex items-center`}
               >
                 <FaBook className="mr-2" />
-                StudySync
+                StudyMaster
               </span>
             </motion.div>
 
