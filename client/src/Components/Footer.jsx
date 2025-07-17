@@ -82,7 +82,7 @@ const Footer = () => {
   const quickLinks = [
     { name: 'Courses', path: '/cources', icon: <FaBook className="text-lg" /> },
     { name: 'Schedule', path: '/schedule', icon: <FaCalendarAlt className="text-lg" /> },
-    { name: 'Progress', path: '/progress', icon: <FaChartLine className="text-lg" /> },
+    
   ];
 
   const contactInfo = [
