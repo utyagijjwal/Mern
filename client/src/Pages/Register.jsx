@@ -93,7 +93,7 @@ const Register = () => {
           className="text-center mb-12"
         >
           <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
-            Join <span className="text-indigo-600">StudySync</span>
+            Join <span className="text-indigo-600">StudyMaster</span>
           </h1>
           <p className="mt-5 max-w-xl mx-auto text-xl text-gray-500">
             Start organizing your academic journey with our powerful tools
